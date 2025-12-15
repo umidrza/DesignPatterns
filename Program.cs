@@ -1,13 +1,13 @@
-﻿using DesignPatterns.Behavioral.Strategy;
-using DesignPatterns.Behavioral.Strategy.Strategies;
+﻿using DesignPatterns.Behavioral.Iterator;
 
-var price = 100m;
-var context = new DiscountContext(new NoDiscountStrategy());
+var library = new BookCollection();
+library.Add(new Book("Clean Code"));
+library.Add(new Book("Design Patterns"));
+library.Add(new Book("Refactoring"));
 
-Console.WriteLine(context.GetFinalPrice(price)); // 100
+var iterator = library.CreateIterator();
 
-context.ChangeStrategy(new PercentageDiscountStrategy(10));
-Console.WriteLine(context.GetFinalPrice(price)); // 90
-
-context.ChangeStrategy(new FixedAmountDiscountStrategy(25));
-Console.WriteLine(context.GetFinalPrice(price)); // 75
+while (iterator.HasNext())
+{
+    Console.WriteLine(iterator.Next());
+}
