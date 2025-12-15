@@ -1,13 +1,15 @@
-﻿using DesignPatterns.Behavioral.Iterator;
+﻿using DesignPatterns.Behavioral.Command;
 
-var library = new BookCollection();
-library.Add(new Book("Clean Code"));
-library.Add(new Book("Design Patterns"));
-library.Add(new Book("Refactoring"));
+var editor = new TextEditor();
+var history = new History();
 
-var iterator = library.CreateIterator();
+editor.Text = "Hello World";
+Console.WriteLine(editor);
 
-while (iterator.HasNext())
-{
-    Console.WriteLine(iterator.Next());
-}
+var command = new ItalicCommand(editor, history);
+command.Execute();
+Console.WriteLine(editor);
+
+var undoCommand = new UndoCommand(history);
+undoCommand.Execute();
+Console.WriteLine(editor);
