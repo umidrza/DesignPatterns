@@ -1,8 +1,13 @@
-﻿using DesignPatterns.Behavioral.Template;
+﻿using DesignPatterns.Behavioral.Observer;
+using DesignPatterns.Behavioral.Observer.Observers;
 
-DocumentGenerator invoice = new InvoiceGenerator();
-DocumentGenerator report = new ReportGenerator();
+var stock = new Stock("ACME", 95m);
 
-Console.WriteLine(invoice.Generate());
-Console.WriteLine();
-Console.WriteLine(report.Generate());
+var trader = new TraderDisplayObserver(stock);
+var alert = new PriceAlertObserver(stock, 100m);
+
+stock.Attach(trader);
+stock.Attach(alert);
+
+stock.UpdatePrice(97m);
+stock.UpdatePrice(101m);
