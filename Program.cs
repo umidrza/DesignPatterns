@@ -1,13 +1,29 @@
-﻿using DesignPatterns.Behavioral.Observer;
-using DesignPatterns.Behavioral.Observer.Observers;
+﻿using DesignPatterns.Behavioral.Mediator;
 
-var stock = new Stock("ACME", 95m);
+var atc = new AirTrafficControlTower(new Runway("27L"));
 
-var trader = new TraderDisplayObserver(stock);
-var alert = new PriceAlertObserver(stock, 100m);
+var a1 = new Aircraft("AZA101", atc, isOnGround: false);
+var a2 = new Aircraft("TUR202", atc, isOnGround: true);
+var a3 = new Aircraft("BAW303", atc, isOnGround: false);
 
-stock.Attach(trader);
-stock.Attach(alert);
+atc.Register(a1);
+atc.Register(a2);
+atc.Register(a3);
 
-stock.UpdatePrice(97m);
-stock.UpdatePrice(101m);
+Console.WriteLine();
+
+a1.RequestLanding();
+a2.RequestTakeoff();
+a3.RequestLanding();
+
+Console.WriteLine();
+
+a1.ClearRunwayAfter("LAND");
+
+Console.WriteLine();
+
+a2.ClearRunwayAfter("TAKEOFF");
+
+Console.WriteLine();
+
+a3.ClearRunwayAfter("LAND");
