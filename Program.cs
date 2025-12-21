@@ -1,39 +1,28 @@
-﻿using DesignPatterns.Behavioral.ChainOfResponsibility;
-using DesignPatterns.Behavioral.ChainOfResponsibility.Handlers;
+﻿using DesignPatterns.Behavioral.Visitor;
+using DesignPatterns.Behavioral.Visitor.Items;
+using DesignPatterns.Behavioral.Visitor.Visitors;
 
-static Handler BuildPipeline()
+var cart = new List<ICartItem>
 {
-    var auth = new AuthenticationHandler();
-    var rate = new RateLimitHandler(limit: 2, window: TimeSpan.FromSeconds(10));
-    var validation = new ValidationHandler();
-    var endpoint = new PlaceOrderHandler();
+    new PhysicalItem("Keyboard", unitPrice: 80m, quantity: 1, weightKg: 1.2m),
+    new DigitalItem("IDE License", price: 49.99m, licenseKey: "LIC-7F3A-2K9D"),
+    new SubscriptionItem("Cloud Storage", monthlyPrice: 9.99m, months: 6),
+    new PhysicalItem("Monitor", unitPrice: 220m, quantity: 2, weightKg: 3.8m)
+};
 
-    auth.SetNext(rate).SetNext(validation).SetNext(endpoint);
-    return auth;
-}
+// Visitor 1: pricing
+var pricing = new PriceVisitor();
+foreach (var item in cart)
+    item.Accept(pricing);
 
-static RequestContext PlaceOrder(string clientId, string? token, string sku, string quantity)
-{
-    var ctx = new RequestContext("/orders/place", clientId, token);
-    ctx.Body["sku"] = sku;
-    ctx.Body["quantity"] = quantity;
-    return ctx;
-}
-
-var pipeline = BuildPipeline();
-
-Console.WriteLine("Case 1: Missing token");
-Console.WriteLine(pipeline.Handle(PlaceOrder("client-1", null, "A1", "2")));
+Console.WriteLine("Pricing summary:");
+Console.WriteLine(pricing);
 Console.WriteLine();
 
-Console.WriteLine("Case 2: Valid token but invalid body");
-Console.WriteLine(pipeline.Handle(PlaceOrder("client-1", "valid-token", "", "2")));
-Console.WriteLine();
+// Visitor 2: receipt
+var receipt = new ReceiptVisitor();
+foreach (var item in cart)
+    item.Accept(receipt);
 
-Console.WriteLine("Case 3: Success");
-Console.WriteLine(pipeline.Handle(PlaceOrder("client-1", "valid-token", "A1", "2")));
-Console.WriteLine();
-
-Console.WriteLine("Case 4: Rate limit exceeded (same client, quick calls)");
-Console.WriteLine(pipeline.Handle(PlaceOrder("client-1", "valid-token", "B7", "1")));
-Console.WriteLine(pipeline.Handle(PlaceOrder("client-1", "valid-token", "C9", "1")));
+Console.WriteLine("Receipt:");
+Console.WriteLine(receipt.Receipt);
