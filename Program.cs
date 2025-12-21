@@ -1,36 +1,18 @@
-﻿using DesignPatterns.Behavioral.Interpreter;
-using DesignPatterns.Behavioral.Interpreter.Expressions;
+﻿using DesignPatterns.Structural.Composite;
 
-// Build expression:
-// role == "admin" OR (country == "US" AND age >= 18)
+IItem keyboard = new Product("Keyboard", 80m);
+IItem mouse = new Product("Mouse", 25m);
+IItem monitor = new Product("Monitor", 220m);
 
-IExpression rule =
-    new OrExpression(
-        new EqualsExpression("role", "admin"),
-        new AndExpression(
-            new EqualsExpression("country", "US"),
-            new GreaterOrEqualExpression("age", 18)
-        )
-    );
+var workSetup = new Bundle("Work Setup")
+    .Add(keyboard)
+    .Add(mouse);
 
-// Context 1
-var ctx1 = new Context();
-ctx1.Set("role", "user");
-ctx1.Set("country", "US");
-ctx1.Set("age", 20);
+var fullOffice = new Bundle("Full Office")
+    .Add(workSetup)
+    .Add(monitor)
+    .Add(new Product("Webcam", 55m));
 
-// Context 2
-var ctx2 = new Context();
-ctx2.Set("role", "admin");
-ctx2.Set("country", "DE");
-ctx2.Set("age", 15);
-
-// Context 3
-var ctx3 = new Context();
-ctx3.Set("role", "user");
-ctx3.Set("country", "DE");
-ctx3.Set("age", 30);
-
-Console.WriteLine(rule.Interpret(ctx1)); // true
-Console.WriteLine(rule.Interpret(ctx2)); // true
-Console.WriteLine(rule.Interpret(ctx3)); // false
+Console.WriteLine(fullOffice.Print());
+Console.WriteLine();
+Console.WriteLine($"Total price: {fullOffice.GetPrice():0.00}");
