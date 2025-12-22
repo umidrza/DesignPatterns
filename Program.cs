@@ -1,21 +1,18 @@
-﻿using DesignPatterns.Structural.Adapter;
-using DesignPatterns.Structural.Adapter.Email_Senders;
-using DesignPatterns.Structural.Adapter.ThirdParty;
+﻿using DesignPatterns.Structural.Bridge;
+using DesignPatterns.Structural.Bridge.Notifications;
+using DesignPatterns.Structural.Bridge.Senders;
 
-var welcome = new EmailMessage(
-    to: "user@example.com",
-    subject: "Welcome",
-    body: "<h1>Hello!</h1><p>Thanks for joining.</p>"
-);
+INotificationSender email = new EmailSender();
+INotificationSender sms = new SmsSender();
 
-Console.WriteLine("=== Using Third-Party Adapter ===");
-IEmailSender thirdParty = new ThirdPartyEmailSender(new ThirdPartyMailer());
-Console.WriteLine(thirdParty.Send(welcome));
+Notification alertByEmail = new AlertNotification(email);
+Notification alertBySms = new AlertNotification(sms);
 
-Console.WriteLine("\n=== Using Custom SMTP Sender ===");
-IEmailSender custom = new SmtpEmailSender();
-Console.WriteLine(custom.Send(welcome));
+Notification reminderByEmail = new ReminderNotification(email);
+Notification reminderBySms = new ReminderNotification(sms);
 
-Console.WriteLine("\n=== Custom sender invalid email ===");
-var bad = new EmailMessage("invalid", "Test", "Hi");
-Console.WriteLine(custom.Send(bad));
+alertByEmail.Notify("user@example.com", "System overload");
+alertBySms.Notify("+123456789", "System overload");
+
+reminderByEmail.Notify("user@example.com", "Stand-up meeting at 10 AM");
+reminderBySms.Notify("+123456789", "Stand-up meeting at 10 AM");
