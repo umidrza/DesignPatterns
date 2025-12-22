@@ -1,18 +1,20 @@
-﻿using DesignPatterns.Structural.Bridge;
-using DesignPatterns.Structural.Bridge.Notifications;
-using DesignPatterns.Structural.Bridge.Senders;
+﻿using DesignPatterns.Structural.Proxy;
 
-INotificationSender email = new EmailSender();
-INotificationSender sms = new SmsSender();
+var admin = new UserContext("Alice", isAdmin: true);
+var user = new UserContext("Bob", isAdmin: false);
 
-Notification alertByEmail = new AlertNotification(email);
-Notification alertBySms = new AlertNotification(sms);
+IDocument adminDoc = new SecureDocumentProxy("secret.txt", admin);
+IDocument userDoc = new SecureDocumentProxy("secret.txt", user);
 
-Notification reminderByEmail = new ReminderNotification(email);
-Notification reminderBySms = new ReminderNotification(sms);
+Console.WriteLine("Admin access:");
+Console.WriteLine(adminDoc.GetContent());
 
-alertByEmail.Notify("user@example.com", "System overload");
-alertBySms.Notify("+123456789", "System overload");
-
-reminderByEmail.Notify("user@example.com", "Stand-up meeting at 10 AM");
-reminderBySms.Notify("+123456789", "Stand-up meeting at 10 AM");
+try
+{
+    Console.WriteLine("\nUser access:");
+    Console.WriteLine(userDoc.GetContent());
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
