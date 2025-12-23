@@ -1,16 +1,16 @@
-﻿using DesignPatterns.Structural.Facade;
-using DesignPatterns.Structural.Facade.Models;
-using DesignPatterns.Structural.Facade.Subsystems;
+﻿using DesignPatterns.Structural.Decorator;
+using DesignPatterns.Structural.Decorator.Decorators;
 
-var facade = new VideoUpload(
-    new VirusScanner(),
-    new Transcoder(),
-    new ThumbnailGenerator(),
-    new MetadataStore()
-);
+// Base component
+INotificationSender sender = new EmailSender();
 
-var ok = new UploadRequest("holiday.mov", "user-1", "My Holiday");
-var bad = new UploadRequest("virus_clip.mov", "user-2", "Not Suspicious At All");
+// Wrap with decorators (order matters!)
+sender =
+    new LoggingDecorator(
+        new RetryDecorator(
+            new EncryptionDecorator(sender),
+            maxRetries: 3
+        )
+    );
 
-Console.WriteLine(facade.Upload(ok));
-Console.WriteLine(facade.Upload(bad));
+sender.Send("user@example.com", "Hello Decorator Pattern!");
