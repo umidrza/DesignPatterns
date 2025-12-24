@@ -1,10 +1,18 @@
-﻿using DesignPatterns.Creational.FactoryMethod.Creators;
+﻿using DesignPatterns.Creational.AbstractFactory.Factories;
 
-// Choose creator at runtime
-NotificationCreator creator;
+static void RenderUI(IUIFactory factory)
+{
+    factory.CreateButton().Render();
+    factory.CreateCheckbox().Render();
+}
 
-creator = new EmailNotificationCreator();
-creator.Notify("user@example.com", "Welcome via Email!");
+// Switch entire family by changing factory
+IUIFactory factory;
 
-creator = new SmsNotificationCreator();
-creator.Notify("+123456789", "Welcome via SMS!");
+factory = new LightUIFactory();
+RenderUI(factory);
+
+Console.WriteLine();
+
+factory = new DarkUIFactory();
+RenderUI(factory);
