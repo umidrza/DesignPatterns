@@ -1,18 +1,10 @@
-﻿using DesignPatterns.Creational.Singleton;
+﻿using DesignPatterns.Creational.FactoryMethod.Creators;
 
-var config = AppConfiguration.Instance;
+// Choose creator at runtime
+NotificationCreator creator;
 
-Console.WriteLine($"Environment: {config.Get("Environment")}");
-Console.WriteLine($"MaxItemsPerPage: {config.Get("MaxItemsPerPage")}");
-Console.WriteLine($"EnableCaching: {config.Get("EnableCaching")}");
+creator = new EmailNotificationCreator();
+creator.Notify("user@example.com", "Welcome via Email!");
 
-// Same instance everywhere
-var configAgain = AppConfiguration.Instance;
-Console.WriteLine($"\nSame instance? {ReferenceEquals(config, configAgain)}");
-
-// Snapshot for debugging/logging
-Console.WriteLine("\nConfiguration snapshot:");
-foreach (var kv in config.Snapshot())
-{
-    Console.WriteLine($"{kv.Key} = {kv.Value}");
-}
+creator = new SmsNotificationCreator();
+creator.Notify("+123456789", "Welcome via SMS!");
