@@ -1,18 +1,13 @@
-﻿using DesignPatterns.Creational.AbstractFactory.Factories;
+﻿using DesignPatterns.Creational.Builder;
 
-static void RenderUI(IUIFactory factory)
-{
-    factory.CreateButton().Render();
-    factory.CreateCheckbox().Render();
-}
+var request = new HttpRequestBuilder()
+    .WithMethod("POST")
+    .WithUrl("https://api.example.com/orders")
+    .WithBearerToken("token-123")
+    .AddQuery("expand", "items")
+    .AddHeader("X-Client", "web")
+    .WithJsonBody("""{ "sku": "A1", "quantity": 2 }""")
+    .Build();
 
-// Switch entire family by changing factory
-IUIFactory factory;
-
-factory = new LightUIFactory();
-RenderUI(factory);
-
-Console.WriteLine();
-
-factory = new DarkUIFactory();
-RenderUI(factory);
+Console.WriteLine(request);
+Console.WriteLine("Final URI: " + request.BuildFinalUri());
