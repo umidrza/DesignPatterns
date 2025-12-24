@@ -1,16 +1,21 @@
-﻿using DesignPatterns.Structural.Decorator;
-using DesignPatterns.Structural.Decorator.Decorators;
+﻿using DesignPatterns.Creational.Prototype;
 
-// Base component
-INotificationSender sender = new EmailSender();
+// Create prototype (template)
+var contractTemplate = new Document("Contract Template");
+contractTemplate.AddPage(new Page("Intro", "This contract is made between..."));
+contractTemplate.AddPage(new Page("Terms", "The parties agree to the following terms..."));
 
-// Wrap with decorators (order matters!)
-sender =
-    new LoggingDecorator(
-        new RetryDecorator(
-            new EncryptionDecorator(sender),
-            maxRetries: 3
-        )
-    );
+// Clone prototype
+var clientAContract = contractTemplate.Clone();
+clientAContract.Rename("Contract - Client A");
 
-sender.Send("user@example.com", "Hello Decorator Pattern!");
+// Clone again
+var clientBContract = contractTemplate.Clone();
+clientBContract.Rename("Contract - Client B");
+
+// Modify clone without affecting prototype
+clientBContract.AddPage(new Page("Appendix", "Special conditions for Client B"));
+
+Console.WriteLine($"{contractTemplate.Name} pages: {contractTemplate.Pages.Count}");
+Console.WriteLine($"{clientAContract.Name} pages: {clientAContract.Pages.Count}");
+Console.WriteLine($"{clientBContract.Name} pages: {clientBContract.Pages.Count}");
